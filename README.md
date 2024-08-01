@@ -1,1 +1,1 @@
-# clone of apple web-site with IPhone 15
+#clone of apple web-site with IPhone 15
