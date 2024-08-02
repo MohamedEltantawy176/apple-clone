@@ -3,7 +3,6 @@ import { highlightsSlides } from "../constants";
 import gsap from "gsap";
 import { pauseImg, playImg, replayImg } from "../utils";
 import { useGSAP } from "@gsap/react";
-gsap.registerPlugin(ScrollTrigger);
 import { ScrollTrigger } from "gsap/all";
 
 const VideoCarousel = () => {
@@ -11,6 +10,7 @@ const VideoCarousel = () => {
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
 
+  // video indicators
   const [video, setVideo] = useState({
     ended: false,
     playStarted: false,
@@ -20,6 +20,8 @@ const VideoCarousel = () => {
   });
   const [loadedData, setLoadedData] = useState([]);
   const { ended, playStarted, id, isLast, isPlaying } = video;
+
+  gsap.registerPlugin(ScrollTrigger);
 
   useEffect(() => {
     if (loadedData.length > 3) {
@@ -44,6 +46,8 @@ const VideoCarousel = () => {
           const progress = Math.ceil(animate.progress() * 100);
           if (progress != currentProgress) {
             currentProgress = progress;
+
+            // setting the width of the progress bar
             gsap.to(videoDivRef.current[id], {
               width:
                 window.innerWidth < 760
@@ -52,17 +56,22 @@ const VideoCarousel = () => {
                   ? "10vw"
                   : "4vw",
             });
+
+            // setting the background color of the progress bar
             gsap.to(span[id], {
               width: `${currentProgress}%`,
               backgroundColor: "white",
             });
           }
         },
+
+        // when the video is ended, replace the progress bar with the indicator and change the background color
         onComplete: () => {
           if (isPlaying) {
             gsap.to(videoDivRef.current[id], {
               width: "12px",
             });
+
             gsap.to(span[id], {
               backgroundColor: "#afafaf",
             });
@@ -72,6 +81,8 @@ const VideoCarousel = () => {
       if (id === 0) {
         animate.restart();
       }
+
+      // update the progress bar
       const animUpdate = () => {
         animate.progress(
           videoRef.current[id].currentTime / highlightsSlides[id].videoDuration
@@ -79,13 +90,16 @@ const VideoCarousel = () => {
       };
 
       if (isPlaying) {
+        // timer for update the progress bar
         gsap.ticker.add(animUpdate);
       } else {
+        // remove the timer when the video is paused (the progress should stop)
         gsap.ticker.remove(animUpdate);
       }
     }
   }, [id, playStarted]);
 
+  // id is the id of of every video until it becomes number 3
   const handleProcess = (type, i) => {
     switch (type) {
       case "video-end":
@@ -126,11 +140,14 @@ const VideoCarousel = () => {
   };
 
   useGSAP(() => {
+    // slider animation to move the video out of the screen and bring the next video in
     gsap.to("#slider", {
       transform: `translateX(${-100 * id}%)`,
       duration: 2,
       ease: "power2.inOut",
     });
+
+    // video animation to play the video when it is in the view
     gsap.to("#video", {
       scrollTrigger: {
         trigger: "#video",
