@@ -12,7 +12,7 @@ const Highlights = () => {
       y: 0,
       scrollTrigger: {
         trigger: "#title",
-        toggleActions: "restart none none none",
+        toggleActions: "restart reverse restart reverse",
       },
     });
     gsap.to(".link", {
@@ -22,7 +22,7 @@ const Highlights = () => {
       stagger: 0.25,
       scrollTrigger: {
         trigger: ".link",
-        toggleActions: "restart none none none",
+        toggleActions: "restart reverse restart reverse",
       },
     });
   }, []);
